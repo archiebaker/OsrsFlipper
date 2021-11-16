@@ -4,16 +4,11 @@ import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.time.Duration;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.*;
 
 public class PriceMenu extends OsrsFlipper {
-    private JFrame PriceMenuFrame;
     private JButton saveButton;
     private JButton loadButton;
-    private JList Results;
     private JButton getLivePricesButton;
     private JTextArea ItemsToSearchTxt;
     private JPanel panelMain;
@@ -46,8 +41,10 @@ public class PriceMenu extends OsrsFlipper {
 
     //static OsrsFlipper flipper = new OsrsFlipper();
 
-    ArrayList<Items> itemsArray = new ArrayList<>();
-    double usersCashStack;
+    ArrayList<Item> itemArray = new ArrayList<>();
+
+    private double usersCashAmount;
+
     public PriceMenu()
     {
         getLivePricesButton.addActionListener(new ActionListener()
@@ -55,12 +52,12 @@ public class PriceMenu extends OsrsFlipper {
             @Override
             public void actionPerformed(ActionEvent e)
             {
-                if (usersCashStack == 0)
+                if (usersCashAmount == 0)
                 {
-                    JOptionPane.showMessageDialog(PriceMenuFrame, "Please enter the amount of money you have first");
+                    JOptionPane.showMessageDialog(panelMain, "Please enter the amount of money you have first");
                     return;
                 }
-                itemsArray.clear();
+                itemArray.clear();
                 resultsText.setText("");
                 String allItemsInTextBoxAsString = ItemsToSearchTxt.getText();
                 String[] itemNames = allItemsInTextBoxAsString.split("\n");
@@ -69,6 +66,7 @@ public class PriceMenu extends OsrsFlipper {
                     createHashMapOfItemNamesToItemIDs();
                 } catch (IOException ioException)
                 {
+                    JOptionPane.showMessageDialog(panelMain, "Hashmap couldn't be created, has the wiki changed?");
                     ioException.printStackTrace();
                 }
                 try
@@ -78,8 +76,10 @@ public class PriceMenu extends OsrsFlipper {
                     scrapeData(RequestDetails.TRADE_LIMIT_AMOUNT);
                 } catch (IOException ioException)
                 {
+                    JOptionPane.showMessageDialog(panelMain, "Item data could not be retrieved from the wiki");
                     ioException.printStackTrace();
                 }
+                TradeScoreCalculation tradeScoreCalculation = new TradeScoreCalculation();
                 for (String itemName : itemNames)
                 {
                     int lowPriceAverage5m = 0;
@@ -123,19 +123,17 @@ public class PriceMenu extends OsrsFlipper {
 
                     double ROIInstant = ((double) fullInstantProfit * 100) / fullBuyCostInstant;
                     double ROIAverage = 0;
-                    if (fullBuyCostAverage != 0) {
+                    if (fullBuyCostAverage != 0)
+                    {
                         ROIAverage = ((double) fullAverageProfit5m * 100) / fullBuyCostAverage;
                     }
-                    if (ROIInstant != 0) {
+                    if (ROIInstant != 0)
+                    {
                         ROIInstant = round(ROIInstant, 2);
                     }
-                    if (ROIAverage != 0 && fullBuyCostAverage != 0) {
-                        ROIAverage = round(ROIAverage, 2);
-                    }
-                    tradeScore = 0;
-                    Items item = new Items(itemName, lowPriceInstant, highPriceInstant, potentialProfitInstant, ROIInstant, lowTime, highTime, potentialProfit5m, ROIAverage, highPriceAverage5m, lowPriceAverage5m, highVolumeAverage5m, lowVolumeAverage5m, tradeLimitAmount, tradeScore);
-                    calculateTradeScore(item);
-                    itemsArray.add(item);
+                    Item item = new Item(itemName, lowPriceInstant, highPriceInstant, potentialProfitInstant, ROIInstant, lowTime, highTime, potentialProfit5m, ROIAverage, highPriceAverage5m, lowPriceAverage5m, highVolumeAverage5m, lowVolumeAverage5m, tradeLimitAmount, tradeScore);
+                    tradeScoreCalculation.calculateTradeScore(item, usersCashAmount);
+                    itemArray.add(item);
                 }
                 printResults();
             }
@@ -149,9 +147,9 @@ public class PriceMenu extends OsrsFlipper {
             @Override
             public void actionPerformed(ActionEvent e)
             {
-                Collections.sort(itemsArray, new Comparator<Items>()
+                Collections.sort(itemArray, new Comparator<Item>()
                 {
-                    public int compare(Items p1, Items p2)
+                    public int compare(Item p1, Item p2)
                     {
                         return (p1.getProfit() * p1.getTradeLimitAmount()- p2.getProfit() * p2.getTradeLimitAmount()) * -1;
                     }
@@ -164,9 +162,9 @@ public class PriceMenu extends OsrsFlipper {
         sortByTradeScoreButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                Collections.sort(itemsArray, new Comparator<Items>()
+                Collections.sort(itemArray, new Comparator<Item>()
                 {
-                    public int compare(Items p1, Items p2)
+                    public int compare(Item p1, Item p2)
                     {
                         return (int)( Math.round(p1.getTradeScore()) - (int) Math.round(p2.getTradeScore())) * -1;
                     }
@@ -182,9 +180,9 @@ public class PriceMenu extends OsrsFlipper {
             public void actionPerformed(ActionEvent e)
             {
                 //sort in descending order
-                Collections.sort(itemsArray, new Comparator<Items>()
+                Collections.sort(itemArray, new Comparator<Item>()
                 {
-                    public int compare(Items p1, Items p2)
+                    public int compare(Item p1, Item p2)
                     {
                         return (p1.getProfit()- p2.getProfit()) * -1;
                     }
@@ -196,8 +194,8 @@ public class PriceMenu extends OsrsFlipper {
         sortByMostProfitButton1.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                Collections.sort(itemsArray, new Comparator<Items>(){
-                    public int compare(Items p1, Items p2) {
+                Collections.sort(itemArray, new Comparator<Item>(){
+                    public int compare(Item p1, Item p2) {
                         return (p1.getAvgProfit5m()- p2.getAvgProfit5m()) * -1;
                     }
                 });
@@ -208,8 +206,8 @@ public class PriceMenu extends OsrsFlipper {
         sortByMostROIButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                Collections.sort(itemsArray, new Comparator<Items>(){
-                    public int compare(Items p1, Items p2) {
+                Collections.sort(itemArray, new Comparator<Item>(){
+                    public int compare(Item p1, Item p2) {
                         return Double.compare(p1.getInstantROI(), p2.getInstantROI()) * -1;
                     }
                 });
@@ -220,8 +218,8 @@ public class PriceMenu extends OsrsFlipper {
         sortByMostROIButton1.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                Collections.sort(itemsArray, new Comparator<Items>(){
-                    public int compare(Items p1, Items p2) {
+                Collections.sort(itemArray, new Comparator<Item>(){
+                    public int compare(Item p1, Item p2) {
                         return Double.compare(p1.getFiveMinROI(), p2.getFiveMinROI()) * -1;
                     }
                 });
@@ -229,10 +227,13 @@ public class PriceMenu extends OsrsFlipper {
             }
         });
 
-
+        final int THOUSAND_MULTIPLIER = 1000;
+        final int MILLION_MULTIPLIER = 1000000;
+        final int BILLION_MULTIPLIER = 1000000000;
         CashStackAmountTxt.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+
                 try {
                     Double.parseDouble(CashStackAmountTxt.getText());
                     ThousandsRadioButton.setText(CashStackAmountTxt.getText() + "K");
@@ -240,20 +241,20 @@ public class PriceMenu extends OsrsFlipper {
                     BillionsRadioButton.setText(CashStackAmountTxt.getText() + "B");
                     if (ThousandsRadioButton.isSelected())
                     {
-                        usersCashStack = Double.parseDouble(CashStackAmountTxt.getText()) * 1000;
+                        usersCashAmount = ((Double.parseDouble(CashStackAmountTxt.getText()) * THOUSAND_MULTIPLIER));
                     }
                     if (MillionsRadioButton.isSelected())
                     {
-                        usersCashStack = Double.parseDouble(CashStackAmountTxt.getText()) * 1000000;
+                        usersCashAmount = ((Double.parseDouble(CashStackAmountTxt.getText()) * MILLION_MULTIPLIER));
                     }
                     if (BillionsRadioButton.isSelected())
                     {
-                        usersCashStack = Double.parseDouble(CashStackAmountTxt.getText()) * 1000000000;
+                        usersCashAmount = ((Double.parseDouble(CashStackAmountTxt.getText()) * BILLION_MULTIPLIER));
                     }
-                    System.out.println("You have " + usersCashStack);
+                    System.out.println("You have " + usersCashAmount);
 
                 }catch (NumberFormatException error) {
-                JOptionPane.showMessageDialog(PriceMenuFrame, "Please enter a number only");
+                JOptionPane.showMessageDialog(panelMain, "Please enter a number only");
                 }
 
             }
@@ -262,90 +263,13 @@ public class PriceMenu extends OsrsFlipper {
 
     }
 
-    Date earlierDate;
-    public void calculateTradeScore (Items item)
-    {
-        Date currentDateTime = new Date();
-        //+2 added to beat margins
-        double currentTradeScore = 0;
-        Date lowTime = item.getLowTime();
-        Date highTime = item.getHighTime();
-        Duration timeDifferenceBetweenBuyAndSell = Duration.between(lowTime.toInstant(), highTime.toInstant());
-        //Using Absolute since it doesn't matter which time value is bigger, just want to know the difference
-        double timeDifferenceInSecondsBetweenBuyAndSellInSeconds = Math.abs(timeDifferenceBetweenBuyAndSell.toMillis()/1000);
-        //System.out.println("Duration is " + timeDifferenceInSecondsBetweenBuyAndSellInSeconds);
 
-        if (lowTime.before(highTime) || lowTime.equals(highTime))
-        {
-            earlierDate = lowTime;
-        }
-        else if (highTime.before(lowTime))
-        {
-            earlierDate = highTime;
-        }
-        Duration timeDifferenceBetweenEarliestTimeAndNow = Duration.between(currentDateTime.toInstant(), earlierDate.toInstant());
-        double timeDifferenceBetweenEarliestTimeAndNowInSeconds = Math.abs(timeDifferenceBetweenEarliestTimeAndNow.toMillis()/1000);
-
-        double numberToDivideByBasedOnTime = (timeDifferenceBetweenEarliestTimeAndNowInSeconds * 0.6) + (timeDifferenceInSecondsBetweenBuyAndSellInSeconds * 1.0);
-        int potentialProfit = item.getProfit() * item.getTradeLimitAmount();
-        if (timeDifferenceInSecondsBetweenBuyAndSellInSeconds >= 10)
-        {
-            currentTradeScore = potentialProfit/numberToDivideByBasedOnTime;
-        }
-        else if (timeDifferenceInSecondsBetweenBuyAndSellInSeconds <10 && timeDifferenceInSecondsBetweenBuyAndSellInSeconds >= 0)
-        {
-            currentTradeScore =potentialProfit/(timeDifferenceBetweenEarliestTimeAndNowInSeconds + 10);
-        }
-
-
-
-
-
-
-        long totalBuyCost = (item.getLowPrice() + 1) * item.getTradeLimitAmount();
-        //Penalties for using too much of cash stack applied after
-        if ((totalBuyCost*100)/usersCashStack > 25)
-        {
-            //Not worth buying
-            if ((totalBuyCost*100)/usersCashStack >= 1000)
-            {
-                System.out.println(item.getName() + " is very expensive");
-                currentTradeScore = 0;
-            }
-            else if ((totalBuyCost*100)/usersCashStack >= 500)
-            {
-                currentTradeScore = currentTradeScore*0.1;
-            }
-            else if ((totalBuyCost*100)/usersCashStack >= 200)
-            {
-                currentTradeScore = currentTradeScore*0.55;
-            }
-            else if ((totalBuyCost*100)/usersCashStack >= 100)
-            {
-                currentTradeScore = currentTradeScore*0.6;
-            }
-            else if ((totalBuyCost*100)/usersCashStack >= 50)
-            {
-                currentTradeScore = currentTradeScore*0.7;
-            }
-           else if ((totalBuyCost*100)/usersCashStack >= 40)
-            {
-                currentTradeScore = currentTradeScore*0.8;
-            }
-            else if ((totalBuyCost*100)/usersCashStack >= 25)
-            {
-                currentTradeScore = currentTradeScore*0.9;
-            }
-        }
-        System.out.println("Trade score of item " + item.getName() + " is " + currentTradeScore);
-        item.setTradeScore(currentTradeScore);
-    }
 
 
     public void printResults()
     {
         resultsText.setText("");
-        for (Items item : itemsArray)
+        for (Item item : itemArray)
         {
             int fullInstantProfit = item.getTradeLimitAmount() * item.getProfit();
             int fullAverageProfit5m = item.getTradeLimitAmount() * item.getAvgProfit5m();
@@ -362,12 +286,7 @@ public class PriceMenu extends OsrsFlipper {
             {
                 ROIInstant = round(ROIInstant, 2);
             }
-            if (ROIAverage != 0 && fullBuyCostAverage != 0)
-            {
-                ROIAverage = round(ROIAverage, 2);
-            }
-
-            resultsText.setText(resultsText.getText() + "--------------" + item.getName() + "--------------" +
+            resultsText.setText(resultsText.getText() + "--------------" + item.getItemName() + "--------------" +
                     "\n Potential profit per unit: " + item.getProfit() +
                     "\n Buy limit: " + item.getTradeLimitAmount() +
                     "\n Potential profit total: " + item.getProfit() * item.getTradeLimitAmount() +
@@ -397,5 +316,7 @@ public class PriceMenu extends OsrsFlipper {
         bd = bd.setScale(places, RoundingMode.HALF_UP);
         return bd.doubleValue();
     }
+
+
 
 }

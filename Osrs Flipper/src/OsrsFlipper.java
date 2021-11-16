@@ -3,16 +3,12 @@ import com.gargoylesoftware.htmlunit.*;
 import com.gargoylesoftware.htmlunit.html.DomElement;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.javascript.SilentJavaScriptErrorListener;
-
-import java.net.*;
 import java.io.*;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
+
 
 public class OsrsFlipper {
-    //Store in a hashmap of type array containing hightime, lowtime, lowprice, highprice
 
     static String priceDataInstant;
     static String priceData5m;
@@ -32,22 +28,19 @@ public class OsrsFlipper {
         {
             page = webClient.getPage("https://prices.runescape.wiki/api/v1/osrs/latest");
             WebResponse response = page.getWebResponse();
-            String responseString = response.getContentAsString();
-            priceDataInstant = responseString;
+            priceDataInstant = response.getContentAsString();
         }
         if (requestedDetails == RequestDetails.FIVE_MINUTE_PRICE)
         {
             page = webClient.getPage("https://prices.runescape.wiki/api/v1/osrs/5m");
             WebResponse response = page.getWebResponse();
-            String responseString = response.getContentAsString();
-            priceData5m = responseString;
+            priceData5m = response.getContentAsString();
         }
         if (requestedDetails == RequestDetails.INSTANT_PRICE)
         {
             page = webClient.getPage("https://prices.runescape.wiki/api/v1/osrs/mapping");
             WebResponse response = page.getWebResponse();
-            String responseString = response.getContentAsString();
-            tradeLimitData = responseString;
+            tradeLimitData = response.getContentAsString();
         }
         webClient.close();
 
@@ -60,8 +53,7 @@ public class OsrsFlipper {
     public static String getSpecificItemDataInstant(int itemID) {
         String [] parts = priceDataInstant.split("\""+itemID+"\"");
         parts = parts[1].split("}");
-        String result = parts[0];
-        return result;
+        return parts[0];
     }
 
 
@@ -73,8 +65,7 @@ public class OsrsFlipper {
         String [] parts = priceData5m.split("\""+itemID+"\"");
         if (parts.length > 1) {
             parts = parts[1].split("}");
-            String result = parts[0];
-            return result;
+            return parts[0];
         }
 
         return null;
@@ -84,31 +75,11 @@ public class OsrsFlipper {
         String [] parts = tradeLimitData.split("\"id\":"+itemID+",");
         if (parts.length > 1) {
             parts = parts[1].split("}");
-            String result = parts[0];
-            return result;
+            return parts[0];
         }
 
         return null;
     }
-/*
-    public static String getPriceData(String searchQuery) {
-        //System.out.println(content);
-
-        Date lowTime =  getLowTime(searchQuery);
-        System.out.println("Low time " + lowTime );
-        Date highTime = getHighTime(searchQuery);
-        System.out.println("High time " + highTime);
-        int lowPrice =  getLowPrice(searchQuery);
-        System.out.println("Low price " + lowPrice );
-        int highPrice =  getHighPrice(searchQuery);
-        System.out.println("High price " + highPrice );
-        //System.out.println("Low time " + lowTime);
-        System.out.println(searchQuery);
-
-        String combinedData = lowTime + " " + highTime + " " + lowPrice + " " + highPrice;
-        return combinedData;
-    }
-*/
 
 
 
@@ -116,21 +87,19 @@ public class OsrsFlipper {
     public static int getHighPriceInstant(String searchQuery) {
         String [] parts = searchQuery.split("\"high\":");
         parts = parts[1].split(",");
-        int highPrice= Integer.parseInt(parts[0]);
-        return highPrice;
+        return Integer.parseInt(parts[0]);
     }
 
     public static int getLowPriceInstant(String searchQuery) {
         String [] parts = searchQuery.split("\"low\":");
         parts = parts[1].split(",");
-        int lowPrice = Integer.parseInt(parts[0]);
-        return lowPrice;
+        return Integer.parseInt(parts[0]);
     }
 
     public static int getHighPrice5m(String searchQuery) {
         String [] parts = searchQuery.split("\"avgHighPrice\":");
         parts = parts[1].split(",");
-        Integer highPrice = 0;
+        int highPrice = 0;
         //System.out.println(parts[0]);
         if (!parts[0].equals("null")) {
              highPrice = Integer.parseInt(parts[0]);
@@ -141,7 +110,7 @@ public class OsrsFlipper {
     public static int getLowPrice5m(String searchQuery) {
         String [] parts = searchQuery.split("\"avgLowPrice\":");
         parts = parts[1].split(",");
-        Integer lowPrice =  0;
+        int lowPrice =  0;
         //System.out.println(parts[0]);
         if (!parts[0].equals("null")) {
             lowPrice = Integer.parseInt(parts[0]);
@@ -152,30 +121,26 @@ public class OsrsFlipper {
     public static int getHighVolume5m(String searchQuery) {
         String [] parts = searchQuery.split("\"highPriceVolume\":");
         parts = parts[1].split(",");
-        int highPrice= Integer.parseInt(parts[0]);
-        return highPrice;
+        return Integer.parseInt(parts[0]);
     }
 
     public static int getLowVolume5m(String searchQuery) {
         String [] parts = searchQuery.split("\"lowPriceVolume\":");
         parts = parts[1].split(",");
-        int highPrice= Integer.parseInt(parts[0]);
-        return highPrice;
+        return Integer.parseInt(parts[0]);
     }
 
     public static Date getHighTime(String searchQuery) {
         String [] parts = searchQuery.split("\"highTime\":");
         parts = parts[1].split(",");
-        java.util.Date time=new java.util.Date((long)Integer.parseInt(parts[0])*1000);
-        return time;
+        return new java.util.Date((long)Integer.parseInt(parts[0])*1000);
 
     }
 
     public static Date getLowTime(String searchQuery) {
         String [] parts = searchQuery.split("\"lowTime\":");
         parts = parts[1].split("}");
-        java.util.Date time=new java.util.Date((long)Integer.parseInt(parts[0])*1000);
-        return time;
+        return new java.util.Date((long)Integer.parseInt(parts[0])*1000);
 
     }
 
@@ -183,8 +148,7 @@ public class OsrsFlipper {
         String [] parts = searchQuery.split("\"limit\":");
         if (parts.length > 1) {
             parts = parts[1].split(",");
-            int tradeLimitAmount = Integer.parseInt(parts[0]);
-            return tradeLimitAmount;
+            return Integer.parseInt(parts[0]);
         }
         //5 is the lowest trade limit on any item so its safe to default to 5
         return 5;
@@ -219,10 +183,10 @@ public class OsrsFlipper {
                 namesAndIDs[0] = namesAndIDs[0].replaceAll("\"", "");
                 namesAndIDs[0] = namesAndIDs[0].replaceAll("    ", "");
                 itemsNamesAndIDs.put(namesAndIDs[0], Integer.parseInt(namesAndIDs[1]));
+            } catch (NumberFormatException e) {
+                System.out.println("Line isn't formatted as expected");
             }
-            catch (NumberFormatException e)
-            {
-            }
+
 
         }
     }
@@ -233,7 +197,6 @@ public class OsrsFlipper {
         if (itemsNamesAndIDs.containsKey("\n"+itemName))
         {
             i = itemsNamesAndIDs.get("\n"+itemName);
-            //System.out.println(i);
         }
         return i;
         }
