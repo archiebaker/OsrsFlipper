@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="PriceMenu">
+  <grid id="27dc6" binding="panelMain" layout-manager="GridLayoutManager" row-count="13" column-count="3" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+    <margin top="0" left="0" bottom="0" right="0"/>
+    <constraints>
+      <xy x="20" y="20" width="1000" height="1000"/>
+    </constraints>
+    <properties>
+      <minimumSize width="500" height="500"/>
+    </properties>
+    <border type="none"/>
+    <children>
+      <scrollpane id="a9ba2">
+        <constraints>
+          <grid row="2" column="0" row-span="1" col-span="3" vsize-policy="0" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false">
+            <minimum-size width="200" height="200"/>
+            <preferred-size width="200" height="200"/>
+            <maximum-size width="200" height="200"/>
+          </grid>
+        </constraints>
+        <properties/>
+        <border type="none"/>
+        <children>
+          <component id="10e5e" class="javax.swing.JTextArea" binding="ItemsToSearchTxt">
+            <constraints/>
+            <properties>
+              <dragEnabled value="true"/>
+              <text value="Items to search"/>
+            </properties>
+          </component>
+        </children>
+      </scrollpane>
+      <component id="a7bc6" class="javax.swing.JButton" binding="loadButton">
+        <constraints>
+          <grid row="3" column="0" row-span="1" col-span="3" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <text value="Load"/>
+        </properties>
+      </component>
+      <scrollpane id="c64fb">
+        <constraints>
+          <grid row="6" column="0" row-span="1" col-span="3" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties/>
+        <border type="none"/>
+        <children>
+          <component id="77f1f" class="javax.swing.JTextArea" binding="resultsText">
+            <constraints/>
+            <properties>
+              <minimumSize width="500" height="500"/>
+              <text value="a"/>
+            </properties>
+          </component>
+        </children>
+      </scrollpane>
+      <component id="8a289" class="javax.swing.JButton" binding="getLivePricesButton" default-binding="true">
+        <constraints>
+          <grid row="5" column="0" row-span="1" col-span="3" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <text value="Get live prices"/>
+        </properties>
+      </component>
+      <component id="8dcad" class="javax.swing.JButton" binding="saveButton" default-binding="true">
+        <constraints>
+          <grid row="4" column="0" row-span="1" col-span="3" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <text value="Save"/>
+        </properties>
+      </component>
+      <component id="5dcd1" class="javax.swing.JButton" binding="sortByMostProfitPerUnitButton" default-binding="true">
+        <constraints>
+          <grid row="9" column="0" row-span="1" col-span="3" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <text value="Sort by most profit per unit (Instant)"/>
+        </properties>
+      </component>
+      <component id="edf60" class="javax.swing.JButton" binding="sortByMostProfitButton1" default-binding="true">
+        <constraints>
+          <grid row="10" column="0" row-span="1" col-span="3" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <text value="Sort by most profit (5m Average)"/>
+        </properties>
+      </component>
+      <component id="9fa44" class="javax.swing.JButton" binding="sortByMostROIButton" default-binding="true">
+        <constraints>
+          <grid row="11" column="0" row-span="1" col-span="3" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <text value="Sort by most ROI (Instant)"/>
+        </properties>
+      </component>
+      <component id="4293b" class="javax.swing.JButton" binding="sortByMostROIButton1" default-binding="true">
+        <constraints>
+          <grid row="12" column="0" row-span="1" col-span="3" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <text value="Sort by most ROI (5m Average)"/>
+        </properties>
+      </component>
+      <component id="a7cba" class="javax.swing.JButton" binding="sortByMostProfitTotalButton" default-binding="true">
+        <constraints>
+          <grid row="7" column="0" row-span="1" col-span="3" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <text value="Sort by most profit total (Instant)"/>
+        </properties>
+      </component>
+      <component id="d133f" class="javax.swing.JTextField" binding="CashStackAmountTxt">
+        <constraints>
+          <grid row="1" column="0" row-span="1" col-span="3" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+            <preferred-size width="150" height="-1"/>
+          </grid>
+        </constraints>
+        <properties>
+          <text value="Enter cash stack"/>
+        </properties>
+      </component>
+      <component id="55827" class="javax.swing.JRadioButton" binding="ThousandsRadioButton">
+        <constraints>
+          <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <selected value="true"/>
+          <text value="K"/>
+        </properties>
+      </component>
+      <component id="d38b4" class="javax.swing.JRadioButton" binding="MillionsRadioButton">
+        <constraints>
+          <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <text value="M"/>
+        </properties>
+      </component>
+      <component id="c7167" class="javax.swing.JRadioButton" binding="BillionsRadioButton">
+        <constraints>
+          <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <text value="B"/>
+        </properties>
+      </component>
+      <component id="29ace" class="javax.swing.JButton" binding="sortByTradeScoreButton" default-binding="true">
+        <constraints>
+          <grid row="8" column="0" row-span="1" col-span="3" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <text value="Sort by TradeScore"/>
+        </properties>
+      </component>
+    </children>
+  </grid>
+  <buttonGroups>
+    <group name="CurrencyMultipler">
+      <member id="55827"/>
+      <member id="d38b4"/>
+      <member id="c7167"/>
+    </group>
+  </buttonGroups>
+</form>
